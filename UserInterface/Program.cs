@@ -12,41 +12,49 @@ public class Program
         Console.WriteLine("Welcome to Santa's Delivery Pipeline!");
 
         ToyMachine machine = new ToyMachine();
-        Sleigh sleigh = new Sleigh();
-        MrsClaus mrsClaus = new MrsClaus();
+        var present = machine.Generate();
+        Console.WriteLine($"State of present  { present.CurrentState }");
+        present.MoveNext(Command.Packing);
+        Console.WriteLine($"State of present  { present.CurrentState }");
+        present.MoveNext(Command.Delivered);
+        Console.WriteLine($"State of present  { present.CurrentState }");
+        present.MoveNext(Command.Drop);
+        Console.WriteLine($"State of present  { present.CurrentState }");
+        // Sleigh sleigh = new Sleigh();
+        // MrsClaus mrsClaus = new MrsClaus();
 
-        ConcurrentQueue<Present> toyStore = new ConcurrentQueue<Present>();
-        Parallel.For(0, 50, index =>
-        {
-            var present = machine.Generate();
+        // ConcurrentQueue<Present> toyStore = new ConcurrentQueue<Present>();
+        // Parallel.For(0, 50, index =>
+        // {
+        //     var present = machine.Generate();
 
-            toyStore.Enqueue(present);
-        });
+        //     toyStore.Enqueue(present);
+        // });
 
-        // generate some random Elves
+        // // generate some random Elves
 
-        for (int i = 0; i < numberOfElves; i++)
-        {
-            mrsClaus.Elves.Add(new Elf(sleigh));
-        }
+        // for (int i = 0; i < numberOfElves; i++)
+        // {
+        //     mrsClaus.Elves.Add(new Elf(sleigh));
+        // }
 
         
 
-        Parallel.For(0, toyStore.Count, (presentIndex) =>
-        {
-            var didDequeue = toyStore.TryDequeue(out Present? present);
-            if (present != null)
-            {
-                var task = mrsClaus.AllocatePackingTask(present);
-                task.Start();
-            }
-        });
+        // Parallel.For(0, toyStore.Count, (presentIndex) =>
+        // {
+        //     var didDequeue = toyStore.TryDequeue(out Present? present);
+        //     if (present != null)
+        //     {
+        //         var task = mrsClaus.AllocatePackingTask(present);
+        //         task.Start();
+        //     }
+        // });
 
-        Console.WriteLine($"Number of tasks { mrsClaus.PackingTasks.Count }");
+        // Console.WriteLine($"Number of tasks { mrsClaus.PackingTasks.Count }");
 
-        var results = await Task.WhenAll(mrsClaus.PackingTasks);
+        // var results = await Task.WhenAll(mrsClaus.PackingTasks);
 
-        Console.WriteLine($"Done! Toystore Count: { toyStore.Count } Sleigh Count: { sleigh.Presents.Count }");
+        // Console.WriteLine($"Done! Toystore Count: { toyStore.Count } Sleigh Count: { sleigh.Presents.Count }");
 
         Console.ReadLine();
     }
